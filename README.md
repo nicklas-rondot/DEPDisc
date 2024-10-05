@@ -5,9 +5,6 @@ While the paper presents the underlying theory and the results of the DEPDisc pl
 
 This version is from the 06th of October 2024. A more current version might be available at https://github.com/nicklas-rn/DEPDisc.
 
-https://github.com/user-attachments/assets/15dc699d-a841-495a-bf20-94656e1bb158
-_A video showing the attraction of yeast cells to the edges of two electrodes_
-
 ## Table of Contents
 - [Discs](#Discs)
 - [Device](#Device)
