@@ -49,7 +49,7 @@ To assemble the device, use the following procedure:
 12. Connect the two inner shell sides with three M3 screws: ![alt text](/Figures/housing_screws.JPG?raw=true) ![alt text](/Figures/housing_screws2.JPG?raw=true)
 13. Place the right side of the outer shell on top of the inner shell by carefully bending it slightly: ![alt text](/Figures/right_outer.JPG?raw=true)
 14. Push the aluminium rod through the left side of the outer shell and the hatch: ![alt text](/Figures/rod.JPG?raw=true)
-15. Push the left side of the outer shell on top of the inner shell by moving it in from the left and carefully bending it slightly: ![alt text](/Figures/left_outer.JPG?raw=true)
+15. Push the left side of the outer shell on top of the inner shell by moving it in from the left and carefully bending it slightly: ![alt text](/Figures/left_outer1.JPG?raw=true) ![alt text](/Figures/left_outer2.JPG?raw=true)
 16. Screw six M3 screws into the outer shell: ![alt text](/Figures/shell_screws.JPG?raw=true)
 
 ### Programming
