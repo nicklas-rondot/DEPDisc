@@ -9,6 +9,7 @@ This version is from the 06th of October 2024. A more current version might be a
 - [Discs](#Discs)
 - [Device](#Device)
 - [How to Run](#How%20to%20Run)
+- [Additional Figures](#Additional%20Figures)
 
 ## Discs
 In the folder [Discs](/Discs), the design files for the discs can be found. The PCB files can be used in Eagle or Fusion360 Electronics. [Example Disc PCBs](/Discs/Example%20Disc%20PCBs) are provided as inspiration. The separate [coil PCB](/Discs/Coil%20PCB/) used as transmitter is included as well. For new designs, the [coil PCB library](/Discs/Coil%20PCB%20Library/) can be used.
@@ -17,9 +18,9 @@ In the folder [Discs](/Discs), the design files for the discs can be found. The 
 The [Device CAD and PCB folder](/Device/) contains all the necessary files to reproduce the DEPDisc device. The device is composed of a PCB, off-the-shelf components, and a set of 3D printed parts. 
 
 ### PCB
-To order the PCB at [JLCPCB](jlcpcb.com), the [Manufacturing folder](/Device/PCB/Manufacturing/) with a [ZIP file](/Device/PCB/Manufacturing/reDEP%20Base%20rev1%20v8_2024-09-17.zip) of the Gerber files is included. For assembly by JLCPCB, the [BOM file](/Device/PCB/Manufacturing/DEPDisc%20Base%20rev1%20v8_2024-09-17.zip) and [Pick and Place file](/Device/PCB/Manufacturing/DEPDisc%20Base%20rev1%20v8_2024-09-17.zip) are also provided. 
+To order the PCB at [JLCPCB](https://jlcpcb.com), the [Manufacturing folder](/Device/PCB/Manufacturing/) with a [ZIP file](/Device/PCB/Manufacturing/DEPDisc%20Base%20rev1%20v8_2024-09-17.zip) of the Gerber files is included. For assembly by JLCPCB, the [BOM file](/Device/PCB/Manufacturing/DEPDisc%20Base%20rev1%20v8_2024-09-17.zip) and [Pick and Place file](/Device/PCB/Manufacturing/DEPDisc%20Base%20rev1%20v8_2024-09-17.zip) are also provided. 
 The ordering process is the follwing:
-1. Go to [JLCPCB](jlcpcb.com)
+1. Go to [JLCPCB](https://jlcpcb.com)
 2. Click on **Add gerber file** and upload the ZIP file
 3. Select the desired options and **Enable PCB Assembly** (choose 2 as PCBA quantity instead of 5). Select **Bottom Side Assembly**.
 4. After clicking **Next**, upload the **BOM file** and **CPL (Pick and Place) file**, then continue
@@ -68,3 +69,6 @@ To set a specific speed, type: spin `[PWM value between -255 and 255]`
 
 ### Run from SD card
 Write a text file with the name **run.txt** to the SD card with the same commands as above. Between the commands use a newline. Use the command `delay [delay in seconds]` to set delays. Insert the SD card into the device and select 'Run from SD card'. The device will read the file and execute the commands.
+
+## Additional Figures
+- [A video showing the attraction of beads to the edges of two electrodes](/Figures/dep_edge.mov)

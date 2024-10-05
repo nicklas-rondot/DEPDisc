@@ -1,13 +1,13 @@
-/*  Rui Santos & Sara Santos - Random Nerd Tutorials
-    THIS EXAMPLE WAS TESTED WITH THE FOLLOWING HARDWARE:
-    1) ESP32-2432S028R 2.8 inch 240×320 also known as the Cheap Yellow Display (CYD): https://makeradvisor.com/tools/cyd-cheap-yellow-display-esp32-2432s028r/
-      SET UP INSTRUCTIONS: https://RandomNerdTutorials.com/cyd/
-    2) REGULAR ESP32 Dev Board + 2.8 inch 240x320 TFT Display: https://makeradvisor.com/tools/2-8-inch-ili9341-tft-240x320/ and https://makeradvisor.com/tools/esp32-dev-board-wi-fi-bluetooth/
-      SET UP INSTRUCTIONS: https://RandomNerdTutorials.com/esp32-tft/
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+/*
+  Author: Nicklas Rondot
+  October 05, 2024
+
+  Based on code by:  
+  Rui Santos & Sara Santos - Random Nerd Tutorials
 */
 
+#include "FS.h"
+#include "SD.h"
 #include <SPI.h>
 
 /*  Install the "TFT_eSPI" library by Bodmer to interface with the TFT Display - https://github.com/Bodmer/TFT_eSPI
@@ -39,6 +39,17 @@ XPT2046_Touchscreen touchscreen(XPT2046_CS, XPT2046_IRQ);
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 #define FONT_SIZE 4
+#define FONT_SIZE_SMALL 2
+
+// Set X and Y coordinates for center of display
+const int centerX = SCREEN_WIDTH / 2;
+const int centerY = SCREEN_HEIGHT / 2;
+const int onethirdY = SCREEN_HEIGHT / 3;
+const int twothirdsY = 2 * SCREEN_HEIGHT / 3;
+const int threeQuartersY = 3 * SCREEN_HEIGHT / 4;
+
+
+int mode = 0; // 0: experimental mode, 1: SD card
 
 // Touchscreen coordinates: (x, y) and pressure (z)
 int x, y, z;
@@ -54,26 +65,6 @@ void printTouchToSerial(int touchX, int touchY, int touchZ) {
   Serial.println();
 }
 
-// Print Touchscreen info about X, Y and Pressure (Z) on the TFT Display
-void printTouchToDisplay(int touchX, int touchY, int touchZ) {
-  // Clear TFT screen
-  tft.fillScreen(TFT_WHITE);
-  tft.setTextColor(TFT_BLACK, TFT_WHITE);
-
-  int centerX = SCREEN_WIDTH / 2;
-  int textY = 80;
- 
-  String tempText = "X = " + String(touchX);
-  tft.drawCentreString(tempText, centerX, textY, FONT_SIZE);
-
-  textY += 20;
-  tempText = "Y = " + String(touchY);
-  tft.drawCentreString(tempText, centerX, textY, FONT_SIZE);
-
-  textY += 20;
-  tempText = "Pressure = " + String(touchZ);
-  tft.drawCentreString(tempText, centerX, textY, FONT_SIZE);
-}
 
 void setup() {
   Serial.begin(115200);
@@ -95,23 +86,18 @@ void setup() {
   // Clear the screen before writing to it
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_BLACK, TFT_WHITE);
-  
-  // Set X and Y coordinates for center of display
-  int centerX = SCREEN_WIDTH / 2;
-  int centerY = SCREEN_HEIGHT / 2;
-  int onethirdY = SCREEN_HEIGHT / 3;
-  int twothirdsY = 2 * SCREEN_HEIGHT / 3;
 
-  tft.fillRoundRect((centerX - 140), (onethirdY - 25), 280, 50, 10, TFT_WHITE);
-  tft.drawCentreString("Experimental mode", centerX, (onethirdY - 10), FONT_SIZE);
-  tft.fillRoundRect((centerX - 140), (twothirdsY - 25), 280, 50, 10, TFT_WHITE);
-  tft.drawCentreString("Run from SD card", centerX, (twothirdsY - 10), FONT_SIZE);
-  tft.drawCentreString("Experimental mode currently always active", centerX, (twothirdsY + 80), 2);
+  //tft.fillRoundRect((centerX - 140), (onethirdY - 25), 280, 50, 10, TFT_WHITE);
+  //tft.drawCentreString("Experimental mode", centerX, (onethirdY - 10), FONT_SIZE);
+  tft.fillRoundRect((centerX - 140), (centerY - 25), 280, 50, 10, TFT_WHITE);
+  tft.drawCentreString("Run from SD card", centerX, (centerY - 10), FONT_SIZE);
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.drawCentreString("Or send data via USB", centerX, (threeQuartersY - 10), FONT_SIZE_SMALL);
 }
 
 void loop() {
   // Checks if Touchscreen was touched, and prints X, Y and Pressure (Z) info on the TFT display and Serial Monitor
-  if (touchscreen.tirqTouched() && touchscreen.touched()) {
+  if (mode == 0 &&touchscreen.tirqTouched() && touchscreen.touched()) {
     // Get Touchscreen points
     TS_Point p = touchscreen.getPoint();
     // Calibrate Touchscreen points with map function to the correct width and height
@@ -120,11 +106,13 @@ void loop() {
     z = p.z;
 
     printTouchToSerial(x, y, z);
-    //printTouchToDisplay(x, y, z);
+    if(y < (centerY + 10) && y > (centerY - 10)){
+      mode = 1;
+    }
 
     delay(100);
   }
-  if(Serial.available()){
+  if(mode == 0 && Serial.available()){
     String input = Serial.readStringUntil('\n');
     input.trim();  // Remove any leading or trailing whitespace
 
@@ -174,5 +162,104 @@ void loop() {
         }
       }
     }
+  }
+  if (mode == 1){
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    if(!SD.begin(5)){
+      Serial.println("Card Mount Failed");
+      tft.drawCentreString("No SD card connected", centerX, (centerY - 10), FONT_SIZE);
+      delay(2000);
+      ESP.restart();
+      return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if(cardType == CARD_NONE){
+      Serial.println("No SD card attached");
+      tft.drawCentreString("No SD card connected", centerX, (centerY - 10), FONT_SIZE);
+      delay(2000);
+      ESP.restart();
+      mode = 0;
+      return;
+    }
+
+    File file = SD.open("/run.txt");
+    if(!file){
+      Serial.println("Failed to open file for reading");
+      tft.drawCentreString("No run.txt file exists", centerX, (centerY - 10), FONT_SIZE);
+      delay(2000);
+      ESP.restart();
+      mode = 0;
+      return;
+    }
+
+    tft.drawCentreString("Running from SD card", centerX, (centerY - 10), FONT_SIZE);
+    Serial.print("Read from file: ");
+    while (file.available()) {
+      String input = file.readStringUntil('\n');
+      input.trim();  // Remove any leading or trailing whitespace
+
+      if (input.startsWith("delay")) {
+        // Extract the value after "delay"
+        int spaceIndex = input.indexOf(' ');
+        if (spaceIndex != -1) {
+          String valueString = input.substring(spaceIndex + 1);
+          int value = valueString.toInt();
+          Serial.print("Set delay to ");
+          Serial.println(value);
+          delay(value);
+        }
+      }
+
+      // Check if the input starts with "freq"
+      else if (input.startsWith("freq")) {
+        // Extract the value after "freq"
+        int spaceIndex = input.indexOf(' ');
+        if (spaceIndex != -1) {
+          String valueString = input.substring(spaceIndex + 1);
+          int value = valueString.toInt();
+
+          // Perform analogWrite on pin 1 with the extracted value
+          ledcDetach(DEP_PIN);
+          if (value > 0) {
+            ledcAttach(DEP_PIN, value, 1);
+            ledcWrite(DEP_PIN, 1);
+            Serial.print("Set freq to ");
+            Serial.println(value);
+          } else if (value == 0) {
+            Serial.println("Stop DEP");
+          }
+        }
+      }
+      // Check if the input starts with "spin"
+      else if (input.startsWith("spin")) {
+        // Extract the value after "spin"
+        int spaceIndex = input.indexOf(' ');
+        if (spaceIndex != -1) {
+          String valueString = input.substring(spaceIndex + 1);
+          int value = valueString.toInt();
+
+          // Perform analogWrite on pin 2 or 3 based on the value's sign
+          if (value > 0) {
+            analogWrite(MOTOR_PIN1, value);
+            analogWrite(MOTOR_PIN2, 0);
+            Serial.print("Spin forward with value ");
+            Serial.println(value);
+          } else if (value < 0) {
+            analogWrite(MOTOR_PIN1, 0);
+            analogWrite(MOTOR_PIN2, -value);  // Use the positive of the negative value
+            Serial.print("Spin backward with value ");
+            Serial.println(-value);
+          } else if (value == 0) {
+            analogWrite(MOTOR_PIN1, 0);
+            analogWrite(MOTOR_PIN2, 0);
+            Serial.println("Stop motor");
+          }
+        }
+      }
+    }
+    file.close();
+    ESP.restart();
   }
 }
