@@ -1,0 +1,6 @@
+spin 200
+delay 1000
+spin -200
+freq 3000000
+delay 2000
+spin 0

@@ -5,6 +5,8 @@ While the paper presents the underlying theory and the results of the DEPDisc pl
 
 This version is from the 06th of October 2024. A more current version might be available at https://github.com/nicklas-rn/DEPDisc.
 
+[](/Figures/dep_edge.mov)
+
 ## Table of Contents
 - [Discs](#Discs)
 - [Device](#Device)
@@ -67,4 +69,4 @@ To set a specific frequency, type: `freq [frequency in Hz]`
 To set a specific speed, type: spin `[PWM value between -255 and 255]`
 
 ### Run from SD card
-Write a text file to the SD card with the same commands as above. Between the commands use a newline. Use the command `time [time in seconds]` to set delays. Insert the SD card into the device and select 'Run from SD card'. The device will read the file and execute the commands.
+Write a text file with the name **run.txt** to the SD card with the same commands as above. Between the commands use a newline. Use the command `delay [delay in seconds]` to set delays. Insert the SD card into the device and select 'Run from SD card'. The device will read the file and execute the commands.
