@@ -8,8 +8,8 @@ This version is from the 06th of October 2024. A more current version might be a
 ## Table of Contents
 - [Discs](#Discs)
 - [Device](#Device)
-- [How to Run](#How%20to%20Run)
-- [Additional Figures](#Additional%20Figures)
+- [How to Run](<#How to Run>)
+- [Additional Figures](<#Additional Figures>)
 
 ## Discs
 In the folder [Discs](/Discs), the design files for the discs can be found. The PCB files can be used in Eagle or Fusion360 Electronics. [Example Disc PCBs](/Discs/Example%20Disc%20PCBs) are provided as inspiration. The separate [coil PCB](/Discs/Coil%20PCB/) used as transmitter is included as well. For new designs, the [coil PCB library](/Discs/Coil%20PCB%20Library/) can be used.
@@ -71,4 +71,4 @@ To set a specific speed, type: spin `[PWM value between -255 and 255]`
 Write a text file with the name **run.txt** to the SD card with the same commands as above. Between the commands use a newline. Use the command `delay [delay in seconds]` to set delays. Insert the SD card into the device and select 'Run from SD card'. The device will read the file and execute the commands.
 
 ## Additional Figures
-- [A video showing the attraction of beads to the edges of two electrodes](/Figures/dep_edge.mov)
+- [A video showing the attraction of yeast cells to the edges of two electrodes](/Figures/dep_edge.mov).
